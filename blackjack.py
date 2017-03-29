@@ -27,8 +27,8 @@ class Card():
     '''
 
     # define class variables
-    value
-    suit
+    value = None
+    suit = None
 
     # create the card
     def __init__(self, card_value, card_suit):
@@ -41,12 +41,12 @@ class Card():
             return 11
         elif self.value in ('K', 'Q', 'J'):
             return 10
-        elif
+        else:
             return int(self.value)
 
     # print the card
-    def print_card:
-        return (self.value, self.suit)
+    def print_card(self):
+        return self.value + ' ' + self.suit
 
 class Hand():
     '''
@@ -55,12 +55,13 @@ class Hand():
     '''
 
     # define class variables
-    hand
-    hand_total
+    hand = None
+    hand_total = None
 
     # Create an empty hand
     def __init__(self):
         self.hand = []
+        self.hand_total = 0
 
     # returns the hand total
     def get_hand_total(self):
@@ -88,7 +89,25 @@ class Hand():
     def deal_card(self, deck):
         hand.append(deck.pop())
 
+
     # print hand
+    def print_hand(self, hide_dealer_hand, name):
+
+        # define variable to hold hand print out
+        hand = name + ' has'
+
+        # print each card in the hand
+        if hide_dealer_hand:
+            print('test')
+        else:
+            for card in self.hand:
+                hand += ' ' + card.print_card()
+
+            # Get hand total
+            hand += 'for a total of '+ str(hand.get_hand_total())
+
+        print(hand)
+
 
 
 class Deck():
@@ -99,7 +118,7 @@ class Deck():
     '''
 
     # define class variables
-    deck
+    deck = None
 
     # initialize the deck
     def __init__(self):
@@ -107,7 +126,7 @@ class Deck():
         # define suits & cards
         suits = ['H', 'D', 'S', 'C']
         cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-        deck = []
+        self.deck = []
 
         # loop through the suits & cards to create the cards
         for s in range(0, len(suits)):
@@ -121,7 +140,6 @@ class Deck():
 
     # shuffles the deck
     def shuffle(self):
-
         # shuffle the deck
         shuffle(self.__deck)
 
@@ -135,17 +153,16 @@ class Blackjack_game():
         * Dealer hits until cards total 17 or more
         * Dealer hits on soft 17
     '''
-    deck
-    player_hand
-    dealer_hand
+    deck = None
+    player_hand = None
+    dealer_hand = None
 
 
     # initalize the game
     def __init__(self):
-        deck = Deck()
-        player_hand = Hand()
-        dealer_hand = Hand()
-
+        self.deck = Deck()
+        self.player_hand = Hand()
+        self.dealer_hand = Hand()
 
         print('--------------------')
         print('Welcome To Blackjack')
@@ -163,6 +180,7 @@ class Blackjack_game():
         # deal the Hands
         self.deal_hands()
 
+        #print the Hands
 
 
 
@@ -261,29 +279,18 @@ class Blackjack_game():
 #
 # ----------------------------------------------------------------------------
 
-def get_play_again():
-    while True:
-        play_again = input('would you like to play again (y/n)')
+# def get_play_again():
+#     while True:
+#         play_again = input('would you like to play again (y/n)')
+#
+#         if play_again == 'y':
+#             return True
+#         elif play_again == 'n':
+#             return False
+#         else:
+#             print('sorry, I did not understand your response')
 
-        if play_again == 'y':
-            return True
-        elif play_again == 'n':
-            return False
-        else:
-            print('sorry, I did not understand your response')
-
-blackjack = Blackjack()
-play = True
-
-print('--------------------')
-print('Welcome To Blackjack')
-print('--------------------\n')
-
-while play:
-
-    play = get_play_again() #input('Would you like to play again (y/n)?')
-
-
+blackjack = Blackjack_game()
 
 
 
