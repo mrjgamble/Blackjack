@@ -164,13 +164,11 @@ class Blackjack_game:
     deck = None
     player_hand = None
     dealer_hand = None
-
+    hand_in_progress = False
+    game_in_progress = True
 
     # initalize the game
     def __init__(self):
-        self.deck = Deck()
-        self.player_hand = Hand()
-        self.dealer_hand = Hand()
 
         print('--------------------')
         print('Welcome To Blackjack')
@@ -181,18 +179,63 @@ class Blackjack_game:
 
     def play_game(self):
 
-        print('Dealing Hands ...\n')
+        self.hand_in_progress = True
+        self.game_in_progress = True
 
-        # deal the Hands
-        self.deal_hands()
+        while self.game_in_progress:
 
-        #print the Hands
-        self.player_hand.print_hand(False, 'Player')
-        self.dealer_hand.print_hand(True, 'Dealer')
+            self.deck = Deck()
+            self.player_hand = Hand()
+            self.dealer_hand = Hand()
 
-        #print
-        player_response = input.('Player, would you like to (H)it or (S)tand?')
 
+            print('Dealing Hands ...\n')
+
+            # deal the Hands
+            self.deal_hands()
+
+            # print the Hands
+            self.player_hand.print_hand(False, 'Player')
+            self.dealer_hand.print_hand(True, 'Dealer')
+            print('\n')
+
+            # check for blackjack
+            self.check_for_blackjack()
+
+            # prompt user for what to do
+            while self.get_player_option() and self.hand_in_progress:
+
+                # deal the card
+                self.player_hand.deal_card(self.deck)
+                self.player_hand.print_hand(False, 'Player')
+
+                # check to see if the player bust
+                if self.player_hand.get_hand_total() > 21:
+                    self.hand_in_progress = False
+                    print('You bust - Dealer Wins')
+                    break
+
+            # print a spacing line
+            print('\n')
+
+            # If the player hasn't busted, then check the dealer hand
+            if self.hand_in_progress:
+
+                # print the current dealer hand
+                self.dealer_hand.print_hand(False, 'Dealer')
+
+                # While the dealer hand is less than 17
+                while self.dealer_hand.get_hand_total() < 17:
+
+                    # Deal a card
+                    self.dealer_hand.deal_card(self.deck)
+                    self.dealer_hand.print_hand(False, 'Dealer')
+
+                # Check for Winner
+                self.check_for_winner()
+
+            # prompt to play again
+            self.get_play_again()
 
     def deal_hands(self):
         self.player_hand.deal_card(self.deck)
@@ -200,6 +243,52 @@ class Blackjack_game:
         self.player_hand.deal_card(self.deck)
         self.dealer_hand.deal_card(self.deck)
 
+    def check_for_winner(self):
+        if self.dealer_hand.get_hand_total() == self.player_hand.get_hand_total():
+            print("It's a push")
+        elif self.dealer_hand.get_hand_total() > 21:
+            print("Dealer Busts - Player wins!")
+        elif self.dealer_hand.get_hand_total() > self.player_hand.get_hand_total():
+            print("Player Wins!")
+        else:
+            print("Dealer Wins")
+
+    def check_for_blackjack(self):
+        if self.player_hand.get_hand_total() == 21:
+            if self.dealer_hand.get_hand_total() == 21:
+                print("It's a push")
+                self.hand_in_progress = False
+            else:
+                print('Blackjack - Winner Winner Chicken Dinner!')
+                self.hand_in_progress = False
+        elif self.dealer_hand.get_hand_total() == 21:
+            print('Dealer has Blackjack - Player loses')
+            self.hand_in_progress = False
+
+    def get_player_option(self):
+
+        while True:
+            player_response = input('Player, would you like to (H)it or (S)tand?')
+
+            if player_response.lower() == 'h':
+                return True
+            elif player_response.lower() == 's':
+                return False
+            else:
+                print('Sorry, I do not understand')
+
+    def get_play_again(self):
+
+        while True:
+            player_response = input('\nGame Over.  Would you like to play again? (y/n)')
+
+            if player_response.lower() == 'n':
+                self.game_in_progress = False
+                break
+            elif player_response.lower() == 'y':
+                break
+            else:
+                print('Sorry, I do not understand')
 
 # class Blackjack:
 #     '''
