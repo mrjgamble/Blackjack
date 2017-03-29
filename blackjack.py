@@ -19,7 +19,7 @@
 # -----------------------------------------------------------------------------
 from random import shuffle
 
-class Card():
+class Card:
     '''
         Creates a card with a value and a suit
         Value = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -46,9 +46,9 @@ class Card():
 
     # print the card
     def print_card(self):
-        return self.value + ' ' + self.suit
+        return (self.value, self.suit)
 
-class Hand():
+class Hand:
     '''
         Creates a hand, which is a list of cards having a value, which is a
         summation of all card values
@@ -56,18 +56,17 @@ class Hand():
 
     # define class variables
     hand = None
-    hand_total = None
 
     # Create an empty hand
     def __init__(self):
         self.hand = []
-        self.hand_total = 0
 
     # returns the hand total
     def get_hand_total(self):
 
         # initialize varaibles
         aces_count = 0
+        total = 0
 
         # loop through the cards in the hand to determine hand total
         for card in self.hand:
@@ -87,7 +86,7 @@ class Hand():
 
     # Add a card to your hand
     def deal_card(self, deck):
-        hand.append(deck.pop())
+        self.hand.append(deck.deal())
 
 
     # print hand
@@ -98,19 +97,19 @@ class Hand():
 
         # print each card in the hand
         if hide_dealer_hand:
-            print('test')
+            hand += ' ' + str(self.hand[0].print_card()) + ' (?, ?)'
         else:
             for card in self.hand:
-                hand += ' ' + card.print_card()
+                hand += ' ' + str(card.print_card())
 
             # Get hand total
-            hand += 'for a total of '+ str(hand.get_hand_total())
+            hand += ' for a total of ' + str(self.get_hand_total())
 
         print(hand)
 
 
 
-class Deck():
+class Deck:
     '''
         Creates a deck of 52 cards.  Cards have the following values:
         Value = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
@@ -118,7 +117,7 @@ class Deck():
     '''
 
     # define class variables
-    deck = None
+    deck = []
 
     # initialize the deck
     def __init__(self):
@@ -134,16 +133,25 @@ class Deck():
 
                 # create the card
                 card = Card(cards[c], suits[s])
+                print('creating card {0} '.format(card.print_card()))
 
                 # add the card to the deck
                 self.deck.append(card)
 
+    def get_total(self):
+        return len(self.deck)
+
     # shuffles the deck
     def shuffle(self):
         # shuffle the deck
-        shuffle(self.__deck)
+        shuffle(self.deck)
 
-class Blackjack_game():
+    # returns one card from the top of the deck
+    def deal(self):
+        return self.deck.pop()
+
+
+class Blackjack_game:
     '''
         Creates a blackjack game with 2 players (a real person and a dealer)
         Rules
@@ -168,10 +176,8 @@ class Blackjack_game():
         print('Welcome To Blackjack')
         print('--------------------\n')
 
+        self.play_game()
 
-    def deal_hands(self):
-        self.player_hand.deal_card(self.deck)
-        self.dealer_hand.deal_card(self.deck)
 
     def play_game(self):
 
@@ -181,7 +187,18 @@ class Blackjack_game():
         self.deal_hands()
 
         #print the Hands
+        self.player_hand.print_hand(False, 'Player')
+        self.dealer_hand.print_hand(True, 'Dealer')
 
+        #print
+        player_response = input.('Player, would you like to (H)it or (S)tand?')
+
+
+    def deal_hands(self):
+        self.player_hand.deal_card(self.deck)
+        self.dealer_hand.deal_card(self.deck)
+        self.player_hand.deal_card(self.deck)
+        self.dealer_hand.deal_card(self.deck)
 
 
 # class Blackjack:
