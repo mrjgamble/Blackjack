@@ -46,7 +46,7 @@ class Card:
 
     # print the card
     def print_card(self):
-        return (self.value, self.suit)
+        return self.value + self.suit
 
 class Hand:
     '''
@@ -78,6 +78,7 @@ class Hand:
             if card.get_value() == 11:
                 aces_count += 1
 
+        # reduce the count total by 11 if total > 21
         while total > 21 and aces_count > 1:
             total -= 11
             aces_count-=1
@@ -88,7 +89,6 @@ class Hand:
     def deal_card(self, deck):
         self.hand.append(deck.deal())
 
-
     # print hand
     def print_hand(self, hide_dealer_hand, name):
 
@@ -96,8 +96,10 @@ class Hand:
         hand = name + ' has'
 
         # print each card in the hand
+        # if this is the dealer, we want to hide the second card, otherwise
+        # show all cards
         if hide_dealer_hand:
-            hand += ' ' + str(self.hand[0].print_card()) + ' (?, ?)'
+            hand += ' ' + str(self.hand[0].print_card()) + ' ??'
         else:
             for card in self.hand:
                 hand += ' ' + str(card.print_card())
@@ -133,13 +135,16 @@ class Deck:
 
                 # create the card
                 card = Card(cards[c], suits[s])
-                print('creating card {0} '.format(card.print_card()))
+                #print('creating card {0} '.format(card.print_card()))
 
                 # add the card to the deck
                 self.deck.append(card)
 
-    def get_total(self):
-        return len(self.deck)
+        # shuffle the deck
+        self.shuffle()
+
+    #def get_total(self):
+    #    return len(self.deck)
 
     # shuffles the deck
     def shuffle(self):
@@ -197,7 +202,7 @@ class Blackjack_game:
             # print the Hands
             self.player_hand.print_hand(False, 'Player')
             self.dealer_hand.print_hand(True, 'Dealer')
-            print('\n')
+            #print('')
 
             # check for blackjack
             self.check_for_blackjack()
@@ -216,7 +221,7 @@ class Blackjack_game:
                     break
 
             # print a spacing line
-            print('\n')
+            print('')
 
             # If the player hasn't busted, then check the dealer hand
             if self.hand_in_progress:
@@ -249,9 +254,9 @@ class Blackjack_game:
         elif self.dealer_hand.get_hand_total() > 21:
             print("Dealer Busts - Player wins!")
         elif self.dealer_hand.get_hand_total() > self.player_hand.get_hand_total():
-            print("Player Wins!")
-        else:
             print("Dealer Wins")
+        else:
+            print("Player Wins")
 
     def check_for_blackjack(self):
         if self.player_hand.get_hand_total() == 21:
@@ -268,6 +273,7 @@ class Blackjack_game:
     def get_player_option(self):
 
         while True:
+            print('')
             player_response = input('Player, would you like to (H)it or (S)tand?')
 
             if player_response.lower() == 'h':
